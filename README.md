@@ -3,4 +3,6 @@ As people’s usage of traditional commuting plumed since the onset of covid, bi
 ## Project Structure:
 ![image](https://user-images.githubusercontent.com/62736640/159799005-d70e050d-ad1f-4030-b62e-1a9ba4c7f339.png)
 
+![Graph](https://github.com/Ryan47Liao/Demo/blob/main/graph_viz.GIF)
+
 ![[Farmers Market Finder Demo]](https://github.com/Ryan47Liao/Demo/blob/main/Capacity_Animated.png)
