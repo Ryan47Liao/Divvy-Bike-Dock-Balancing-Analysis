@@ -5,4 +5,4 @@ As people’s usage of traditional commuting plumed since the onset of covid, bi
 
 ![Graph](https://github.com/Ryan47Liao/Demo/blob/main/graph_viz.GIF)
 
-![[Farmers Market Finder Demo]](https://github.com/Ryan47Liao/Demo/blob/main/Capacity_Animated.png)
+![Farmers Market Finder Demo](https://github.com/Ryan47Liao/Demo/blob/main/Capacity_Animated.png)
