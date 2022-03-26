@@ -11,6 +11,7 @@ As people’s usage of traditional commuting plumed since the onset of covid, bi
 |[**Divvy Station Master Data**](https://docs.google.com/spreadsheets/d/14UR2y1TdE1TQRJC87GSyN7z9tdK97oNsLcsJ8gaEAyg/edit#gid=717210174)|Master file of all Divvy stations included in the Chicago-area network, including important station codes, number of docks, status, and addresses. This file links each Divvy station to a Chicago zip code, neighborhood, and community area.|https://data.cityofchicago.org/Transportation/Divvy-Bicycle-Stations-All-Map/bk89-9dk7|
 
 ## Data Engineering 
+![IMG_7408](https://user-images.githubusercontent.com/62736640/160229594-49238ab9-67fb-40d1-bb05-b4d56c67ad44.PNG)
 
 ## Feature Engineering 
 
