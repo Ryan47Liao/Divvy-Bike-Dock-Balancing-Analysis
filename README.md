@@ -10,14 +10,23 @@ As people’s usage of traditional commuting plumed since the onset of covid, bi
 |[**Chicago Commuter Survey**](https://docs.google.com/spreadsheets/d/14UR2y1TdE1TQRJC87GSyN7z9tdK97oNsLcsJ8gaEAyg/edit#gid=1387586703)|Results from a survey conducted in early 2020 (pre-COVID pandemic) to determine number of commuters and primary method of commuting across Chicago, including respondents from all of Chicago's 54 zip codes and 247 neighborhoods.|https://www.movematcher.com/blog/commute-times-in-chicago/|
 |[**Divvy Station Master Data**](https://docs.google.com/spreadsheets/d/14UR2y1TdE1TQRJC87GSyN7z9tdK97oNsLcsJ8gaEAyg/edit#gid=717210174)|Master file of all Divvy stations included in the Chicago-area network, including important station codes, number of docks, status, and addresses. This file links each Divvy station to a Chicago zip code, neighborhood, and community area.|https://data.cityofchicago.org/Transportation/Divvy-Bicycle-Stations-All-Map/bk89-9dk7|
 
-## Data Engineering 
-![IMG_7408](https://user-images.githubusercontent.com/62736640/160229594-49238ab9-67fb-40d1-bb05-b4d56c67ad44.PNG)
-
-## Feature Engineering 
-
 ## Project Structure:
 ![image](https://user-images.githubusercontent.com/62736640/159799005-d70e050d-ad1f-4030-b62e-1a9ba4c7f339.png)
 
+## Data Engineering 
+![IMG_7408](https://user-images.githubusercontent.com/62736640/160229594-49238ab9-67fb-40d1-bb05-b4d56c67ad44.PNG)
+Remote database was created on RCC through Ubuntu,FileZilla.The database can be accessed through Hue or Pyhive following this [instruction](https://just-market-8d4.notion.site/How-to-create-a-database-on-RCC-Hadoop-and-access-it-using-Python-19e51b5464424e328bdc454b742d6df4).
+
+## Feature Engineering 
+### Connecting databases through (Longitude,Latitude)
+
+### Simulate dock parking to track capacity change 
+
+## Graph Analysis 
+![image](https://user-images.githubusercontent.com/62736640/160230165-c5aa0d9c-e75c-46b6-9fb0-d0b2cf17fd87.png)
+
 ![Graph](https://github.com/Ryan47Liao/Demo/blob/main/graph_viz.GIF)
 
-![Farmers Market Finder Demo](https://github.com/Ryan47Liao/Demo/blob/main/Capacity_Animated.png)
+![image](https://user-images.githubusercontent.com/62736640/160230183-20bcae45-f67e-46b5-b778-4000d5d1be3e.png)
+
+![Capacity Shift](https://github.com/Ryan47Liao/Demo/blob/main/Capacity_Animated.png)
