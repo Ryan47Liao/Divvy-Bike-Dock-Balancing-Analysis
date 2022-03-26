@@ -18,9 +18,15 @@ As people’s usage of traditional commuting plumed since the onset of covid, bi
 Remote database was created on RCC through Ubuntu,FileZilla.The database can be accessed through Hue or Pyhive following this [instruction](https://just-market-8d4.notion.site/How-to-create-a-database-on-RCC-Hadoop-and-access-it-using-Python-19e51b5464424e328bdc454b742d6df4).
 
 ## Feature Engineering 
-### Connecting databases through (Longitude,Latitude)
+### Connecting databases through (Longitude,Latitude), using [Google Geo-Encoder](https://developers.google.com/maps/documentation/geocoding/start)
+Our goal was to connect originally disconnected databases, divvy trip and taxi,bus trip through community. However, community doesn't have an native foreign key to connect to stations, nor does it has geo-data such as coordinates. Therefore, we had to use Google's geo-encoder api to 'convert' string names into coordinates so community can be MAPed to stations. 
+Another advantage of connecting stations with neighbourhood (or community), is that I can then group by community instead of station in future analysis, reducing dimension from 2000+ to less than 100. 
 
 ### Simulate dock parking to track capacity change 
+To visualize the dock capacity for each station at a specific time, I would love to have data that has each station as the column, and each row as the time stamp, so that the capacity change can be kept track of. 
+However, there exist no such data, but instead, the complete travel history was provided. Using this travel history, a simulation is able to be recreated, thus keep track of the capacity throughout the day.
+![image](https://user-images.githubusercontent.com/62736640/160230502-36630ee4-4203-42ee-9531-3d22f3304734.png)
+
 
 ## Graph Analysis 
 ![image](https://user-images.githubusercontent.com/62736640/160230165-c5aa0d9c-e75c-46b6-9fb0-d0b2cf17fd87.png)
