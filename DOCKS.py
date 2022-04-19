@@ -1,22 +1,37 @@
+"""_summary_
+DOCKs class is used to transform travel history data into Station dock capacity data (a time series)
+by simulating changes in capacity given frequency.
+
+Author: Ryan47Liao
+Date: 2022-03-20
+"""
+#Packages
 from impala.dbapi import connect
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 import numpy as np
-
-#
 from tqdm import tqdm
 from datetime import datetime, timedelta
-
 # Graph
 import networkx as nx
-
-##############
+# Analysis 
 from sklearn.cluster import KMeans, DBSCAN
 
 
 class DOCKs:
     def __init__(self, date, trip_subset, df_Station_final, init_with_0=True):
+        """_summary_
+        DOCKs class is used to transform travel history data into Station dock capacity data (a time series)
+        by simulating changes in capacity given frequency.
+        
+        Args:
+            date (str): the date of interest 
+            trip_subset (pd.DataFrame): a subset of travel history,usually all within a day
+            df_Station_final (pd.DataFrame): a Dataset that contains station corrdinates 
+            init_with_0 (bool, optional): Weather to initialize station docks by 0. Defaults to True. 
+            (Then the intepretation changes from dock count to dock delta)
+        """
         self.df_Station_final = df_Station_final.copy()
         self.Capacity = self.Get_Capacity()
         self.df = self.Data_Transform(trip_subset, date)
@@ -29,6 +44,19 @@ class DOCKs:
         return f"DOCK|{self.DF_Dock.shape }"
 
     def Data_Transform(self, trip_subset, date):
+        """_summary_
+        Transforms data by:
+        1.Change DateString into Datetime Objects
+        2.Merge with station to get docks info
+        3.Create subsets of leaving and coming and Stack subsets together
+        
+        Args:
+            trip_subset (pd.DataFrame): a subset of travel history,usually all within a day
+            date (str): the date of interest 
+
+        Returns:
+            pd.DataFrame: _description_
+        """
         trip_subset = trip_subset.copy()
         trip_subset["start_station_id"] = [
             str(id) for id in list(trip_subset["start_station_id"])
@@ -95,12 +123,17 @@ class DOCKs:
             .sort_values("timestamp")
             .reset_index(drop=True)
         )
-        tmr_date = str(datetime.strptime(date, "%Y-%m-%d") + timedelta(days=1)).split(
-            " "
-        )[0]
+        tmr_date = str(datetime.strptime(date, "%Y-%m-%d") + timedelta(days=1)).split(" ")[0]
         return trip_subset_all.query(f'timestamp < "{tmr_date}"')
 
     def Generate_Docks(self, df_Station_final, init_with_0):
+        """_summary_
+        Initilize docks with default capacity 
+        Args:
+            df_Station_final (pd.DataFrame): a Dataset that contains station corrdinates 
+            init_with_0 (bool, optional): Weather to initialize station docks by 0. Defaults to True. 
+            (Then the intepretation changes from dock count to dock delta)
+        """
         docks = sorted(df_Station_final.Nbh_id.unique())
         self.DF_Dock = pd.DataFrame(columns=docks)
         if init_with_0:
@@ -110,6 +143,10 @@ class DOCKs:
         self.DF_Dock = self.DF_Dock.reset_index(drop=True)
 
     def Get_Capacity(self):
+        """_summary_
+        Returns:
+            dict: dock capacity by Neighbourhood
+        """
         return dict(
             self.df_Station_final.groupby("Nbh_id")["Docks in Service"]
             .sum()
@@ -117,6 +154,13 @@ class DOCKs:
         )
 
     def _docks_update(self, time_start=None, time_mins=1):
+        """_summary_
+        Update all station's dock capacity by simulating over the travel history starting 'time_start' untill time_mins
+        
+        Args:
+            time_start (_type_, optional): When does the simulation start. Defaults to None.
+            time_mins (int, optional): How long does the simulation take place till stopping. Defaults to 1.
+        """
         if time_start is None:
             time_start = self.df.loc[self.cursor].timestamp
         current_docks = {
@@ -136,20 +180,45 @@ class DOCKs:
         self.time_book[self.DF_Dock.shape[0] - 1] = time_end
 
     def Dock_Update(self, time_mins=10):
+        """_summary_
+        Keep simulating and update Dock capacity untill there is no data
+        Args:
+            time_mins (int, optional): _description_. Defaults to 10.
+        """
         while True:
             try:
                 self._docks_update(time_mins=time_mins)
             except KeyError:
                 break
 
-    def Get_Normalized_dock(self):
-        out = self.DF_Dock / self.Capacity
+    def Get_Normalized_dock(self, normalize=True):
+        """_summary_
+        Args:
+            normalize (bool, optional): Weather to normalize the data or not. Defaults to True.
+
+        Returns:
+            pd.DataFrame: Station Dock capacity table that's normalized by dock total capacity 
+        """
+        if normalize:
+            out = self.DF_Dock / self.Capacity
+        else:
+            out = self.DF_Dock.copy()
         out["Time_Stamp"] = self.time_book.values()
         return out.set_index("Time_Stamp", drop=True)
 
     ########################################################################
     # Visualiation
     def Capacity_Analysis(self):
+        """_summary_
+        Enginer the following features:
+        1. daily_capacity_low
+        2. daily_capacity_high
+        3. daily_capacity_mean
+        4. daily_capacity_median
+        Into the df_Station_final DataFrame. 
+        Returns:
+            pd.DataFrame: A new Station Table with descriptive features 
+        """
         Dock_Normal = self.Get_Normalized_dock()
         ################
         df_Capacity = pd.DataFrame(Dock_Normal.max())
@@ -177,6 +246,16 @@ class DOCKs:
         figsize=(24, 10),
         palette="coolwarm",
     ):
+        """_summary_
+        Generate visualization of df_Station_cluster_capacity based on capacity average throughout the day
+        
+        Args:
+            bins (list, optional): _description_. Defaults to [-1, -0.1, -0.01, 0.01, 0.1, 0.2, 0.5].
+            df_Station_cluster_capacity (pd.DataFrame, optional): _description_. Defaults to None.
+            show_detail (bool, optional): _description_. Defaults to True.
+            figsize (tuple, optional): _description_. Defaults to (24, 10).
+            palette (str, optional): _description_. Defaults to "coolwarm".
+        """
         if df_Station_cluster_capacity is None:
             if self.df_Station_cluster_capacity is None:
                 df_Station_cluster_capacity = self.Capacity_Analysis()
@@ -231,6 +310,16 @@ class DOCKs:
         figsize=(24, 10),
         palette="magma",
     ):
+        """_summary_
+        Generate visualization of df_Station_cluster_capacity based on capacity highs throughout the day
+        
+        Args:
+            bins (list, optional): _description_. Defaults to [-1, -0.1, -0.01, 0.01, 0.1, 0.2, 0.5].
+            df_Station_cluster_capacity (pd.DataFrame, optional): _description_. Defaults to None.
+            show_detail (bool, optional): _description_. Defaults to True.
+            figsize (tuple, optional): _description_. Defaults to (24, 10).
+            palette (str, optional): _description_. Defaults to "coolwarm".
+        """
         if df_Station_cluster_capacity is None:
             if self.df_Station_cluster_capacity is None:
                 df_Station_cluster_capacity = self.Capacity_Analysis()
